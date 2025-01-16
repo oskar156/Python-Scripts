@@ -19,14 +19,16 @@ i = 0
 
 for item in os.listdir(path_with_all_the_folders):
 
-    current_path = os.path.join(path_with_all_the_folders, item)
-    if os.path.isdir(current_path):
+  current_path = os.path.join(path_with_all_the_folders, item)
+  if os.path.isdir(current_path):
         
-        print(current_path + " ... ", end="", flush=True)
-        shutil.make_archive(current_path, 'zip', current_path)
-        print("archived as " + str(current_path) + ".zip")
+    print(current_path + " ... ", end="", flush=True)
+    shutil.make_archive(current_path, 'zip', current_path)
+    print("archived as " + str(current_path) + ".zip")
 
-i = i + 1
+    i = i + 1
 
+print("")
 print(str(i) + " .zip files created from folders in " + str(path_with_all_the_folders))
+print("")
 input("Script is finished, you can exit the window.")
