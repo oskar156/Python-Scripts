@@ -1,0 +1,101 @@
+##########
+## per message
+##########
+def read_xml(xml_file, out_file, lines_to_read, print_line = False):
+  i = 0
+  while i < lines_to_read:
+    s = xml_file.readline()
+    try:
+      readable_date = re.findall("readable_date=\"[A-Za-z0-9\:\, ]+\"", s)[0][15:-1].replace("\\r\\n", "")
+      contact_name = re.findall("contact_name=\"[A-Za-z]+", s)[0][14:].replace("\\r\\n", "")
+      body = re.findall("body=\".* toa=", s)[0][6:-6].replace("\\r\\n", "")
+
+      msg_type = ""
+      msg_type_raw = re.findall("type=\"[0-9]+\"", s)[0][6:-1].replace("\\r\\n", "")
+      if msg_type_raw == "1":
+        msg_type = "RECEVIED"
+      elif msg_type_raw == "2":
+        msg_type = "SENT"
+
+      line_to_write = ""
+      line_to_write = line_to_write + '"' + str(readable_date) + '"' + ','
+      line_to_write = line_to_write + '"' + str(contact_name) + '"' + ','
+      line_to_write = line_to_write + '"' + str(body) + '"' + ','
+      line_to_write = line_to_write + '"' + str(msg_type) + '"' + ''
+      line_to_write = line_to_write + '\n'
+
+      if print_line:
+        print(line_to_write)
+      file.write(line_to_write)
+    except:
+      if print_line:
+        print("line_to_write")
+      else:
+        pass
+    i = i + 1
+  return i
+  
+xml_file_path = r'\sms-20250326220651.xml'
+f=open(xml_file_path, encoding='utf-8')
+file = open(r'\xml_parsed.csv', "w")
+file.write("DATE,CONTACT,MSG,TYPE")
+i_last_stop = 0
+i_last_stop = i_last_stop + read_xml(f, file, 10, True)
+i_last_stop = i_last_stop + read_xml(f, file, 100000)
+file.flush()
+
+##########
+## per word
+##########
+import csv
+
+def split_by_word(in_file_csv, out_file, lines_to_read, print_line = False):
+  i = 0
+  #DATE,CONTACT,MSG,TYPE
+  IN_DATE_COL = 0
+  IN_CONTACT_COL =1
+  IN_MSG_COL = 2
+  IN_TYPE_COL = 3
+  
+  #DATE,CONTACT,OG MSG,TYPE,WORD
+  OUT_DATE_COL = 0
+  OUT_CONTACT_COL =1
+  OUT_MSG_COL = 2
+  OUT_TYPE_COL = 3
+  OUT_WORD_COL = 4
+  for row in in_file_csv:
+    
+    try:
+      old_row = '"' + '","'.join(row) + '"'
+      msg = row[IN_MSG_COL]
+      words = msg.split(" ")
+      for word in words:
+        line_to_write = old_row + ',"' + str(word).replace('"','') + '"' + '\n'
+        if print_line:
+          print(line_to_write)
+        out_file.write(line_to_write)
+    except:
+      if print_line:
+        print("error")
+      else:
+        pass
+    
+    i = i + 1
+    if i >= lines_to_read:
+      break
+  return i
+  
+  
+xml_parsed_file_path = r'E:\PROJECTS\other\xml parsing\XML_PARSED_1.csv'
+xml_parsed_file = open(xml_parsed_file_path, newline='')
+xml_parsed_file_csv = csv.reader(xml_parsed_file, delimiter = ",", quotechar='"')
+words_file = open(r'E:\PROJECTS\other\xml parsing\words_file.csv', "w")
+words_file.write("DATE,CONTACT,OG MSG,TYPE,WORD")
+i_last_stop = 0
+i_last_stop = i_last_stop + split_by_word(xml_parsed_file_csv, words_file, 10, True)
+i_last_stop = i_last_stop + split_by_word(xml_parsed_file_csv, words_file, 100000)
+words_file.flush()
+
+for row in xml_parsed_file_csv:
+	print(row)
+	break
