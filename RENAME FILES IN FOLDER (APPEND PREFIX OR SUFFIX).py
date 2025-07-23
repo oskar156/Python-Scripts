@@ -4,7 +4,7 @@ prefix = 'GPPO'
 suffix = ''
 
 path = os.getcwd() #CURRENT DIRECTORY
-script_file_path = input(__file__)
+script_file_path = __file__
 
 i = 0
 for file in os.listdir(path):
