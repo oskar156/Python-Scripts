@@ -1,0 +1,10 @@
+#ran under 5minutes for a 100 million row file
+import re
+
+input_file = 'yourfile.csv'
+output_file = 'cleaned.csv'
+
+with open(input_file, 'r', encoding='utf-8') as infile, open(output_file, 'w', encoding='utf-8') as outfile:
+    for line in infile:
+        cleaned_line = re.sub('"', '', line)
+        outfile.write(cleaned_line)
